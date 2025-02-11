@@ -1,0 +1,17 @@
+repository_type: pipeline
+
+nf_core_version: 3.1.1
+
+lint: {}
+
+template:
+  org: nf-core
+  name: seqcoverage
+  description: A pipeline that generates coverage graphs by aligning sequencing reads
+    to a selected viral reference genome, visualizing the depth of coverage across
+    the genome.
+  author: Magdalena Dabrowska
+  version: 1.0.0dev
+  force: true
+  outdir: .
+  is_nfcore: true
