@@ -5,6 +5,10 @@
 */
 include { FASTQC                 } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+include { KRAKEN2_KRAKEN2        } from '../modules/nf-core/kraken2/kraken2/main'
+include { SPLIT_BY_GENOME        } from '../modules/local/split_by_genome/main'
+include { MINIMAP2_ALIGN         } from '../modules/nf-core/minimap2/align/main'
+include { GENERATE_COVERAGE      } from '../modules/local/generate_coverage/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -44,6 +48,45 @@ workflow SEQCOVERAGE {
             newLine: true
         ).set { ch_collated_versions }
 
+    // MODULE: Run KRaken2
+    KRAKEN2_KRAKEN2 (
+        ch_samplesheet,
+        params.kraken2_db,
+        true,
+        false
+    )
+
+    ch_viruses = Channel.fromPath(params.viruses_csv)
+        .splitCsv (header: true)
+        .filter { row -> row.name in params.viruses }
+
+    // // Combine samples and viruses into a single channel
+    // ch_sample_cross = KRAKEN2_KRAKEN2.out.classified_reads_fastq
+    //     .combine(ch_viruses)   // Cross samples with viruses
+
+
+    // // Run the split_by_genome process for each sample and virus
+    // SPLIT_BY_GENOME (
+    //     ch_sample_cross
+    // )
+
+    MINIMAP2_ALIGN (
+        KRAKEN2_KRAKEN2.out.classified_reads_fastq,
+        [[ id:'ref'], params.minimap2_db],
+        true,
+        'bai',
+        false,
+        false
+    )
+
+    ch_bam_and_index = MINIMAP2_ALIGN.out.bam
+        .join(MINIMAP2_ALIGN.out.index)
+        .combine(ch_viruses)
+
+    GENERATE_COVERAGE (
+        ch_bam_and_index
+    )
+    
 
     //
     // MODULE: MultiQC

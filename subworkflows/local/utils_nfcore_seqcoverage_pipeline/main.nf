@@ -151,6 +151,36 @@ workflow PIPELINE_COMPLETION {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 //
+// Create a map between viruses and their respective taxids
+//
+def virusTaxidMap = [
+    'SARS_CoV_2': '2697049', 
+    'InfluenzaA': '335341', 
+    'InfluenzaB': '', 
+    'RSV_A': '11250', 
+    'RSV_B': '', 
+    'Rhinovirus_A': '147711', 
+    'Rhinovirus_B': '147712',
+    'Rhinovirus_C': '463676',
+    'Rhinovirus_NAT001': '992230',
+    'Parainfluenza1': '', 
+    'Parainfluenza2': '', 
+    'Parainfluenza3': '', 
+    'Parainfluenza4': '', 
+    'Human_MetapneumovirusA':'11250', 
+    'Human_MetapneumovirusB': '', 
+    'Adenovirus': '', 
+    'COVID_OC43': '31631', 
+    'COVID_229E': '11137', 
+    'COVID_NL63': '277944', 
+    'COVID_HKU1': '', 
+    'Bocavirus': '',
+    'Mastadenovirus_B': '108098',
+    'Mastadenovirus_C': '129951',
+    'Monkeypox': '10244'
+]
+
+//
 // Check and validate pipeline parameters
 //
 def validateInputParameters() {

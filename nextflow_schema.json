@@ -5,6 +5,26 @@
     "description": "A pipeline that generates coverage graphs by aligning sequencing reads to a selected viral reference genome, visualizing the depth of coverage across the genome.",
     "type": "object",
     "$defs": {
+        "pipeline_specific_options": {
+            "title": "Pipeline specific options",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "viruses": {
+                    "type": "array",
+                    "description": "Genomes to align against",
+		    "items": {
+			"type": "string",
+                        "enum": ["SARS_CoV_2", "InfluenzaA", "InfluenzaB", "RSV_A", "RSV_B", "Rhinovirus", "Parainfluenza1", "Parainfluenza2", "Parainfluenza3", "Parainfluenza4", "Human_MetapneumovirusA", "Human_MetapneumovirusB", "Adenovirus", "COVID_OC43", "COVID_229E", "COVID_NL63", "COVID_HKU1", "Bocavirus"]
+		    }
+                },
+                "clusterOpts": {
+                    "type": "string"
+                }
+            },
+            "required": ["viruses"]
+        },
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -229,6 +249,9 @@
         }
     },
     "allOf": [
+        {
+            "$ref": "#/$defs/pipeline_specific_options"
+        },
         {
             "$ref": "#/$defs/input_output_options"
         },
